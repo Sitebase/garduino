@@ -20,7 +20,7 @@ Todo
 
 Interesting read
 ----------------
-[Microcontroller assisted gardening](http://www.make-digital.com/make/vol18/?pg=94#pg94)
-[pH levels for herbs](http://www.gardenersnet.com/atoz/phlevel3.htm)
-[Change pH level of soil](http://www.clemson.edu/extension/hgic/plants/other/soils/hgic1650.html)
-[Standalone Atmega](http://arduino.cc/en/Main/Standalone)
+* [Microcontroller assisted gardening](http://www.make-digital.com/make/vol18/?pg=94#pg94)
+* [pH levels for herbs](http://www.gardenersnet.com/atoz/phlevel3.htm)
+* [Change pH level of soil](http://www.clemson.edu/extension/hgic/plants/other/soils/hgic1650.html)
+* [Standalone Atmega](http://arduino.cc/en/Main/Standalone)
