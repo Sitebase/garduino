@@ -31,7 +31,7 @@ Todo
 * Add solar panel to power the arduino
 * Buy water proof box for the electronics
 * Maybe use interrupts for button based actions so we can use a slow main loop that only checks sensors each 30 seconds or so (more energy efficient). The buttons can then be directly handled when pushed.
-* Use bandgap to detect low battery (see Interesting read)
+* Use bandgap to detect low battery (see Interesting read), also see [this for a code example](http://forum.arduino.cc/index.php?topic=88935.0)
 * Run from batteries instead of PSU
 
 Interesting read
@@ -47,3 +47,5 @@ Interesting read
 * [Interrupts](https://code.google.com/p/arduino-pcimanager/)
 * [REST interface for reading out sensor information](https://github.com/sirleech/Webduino)
 * [Use bandgap to detect low battery](http://jeelabs.org/2012/05/04/measuring-vcc-via-the-bandgap/)
+* [Article about power saving](http://www.gammon.com.au/forum/?id=11497)
+* [Self sufficient arduino board with solar panel](http://www.instructables.com/id/Self-Sufficient-Arduino-Board/)
