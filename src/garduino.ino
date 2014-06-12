@@ -11,11 +11,17 @@ const int PUMP_PIN = 4;
 const int PH_PIN = 5;
 const int PH_STATUS_PIN = 6;
 
+const int MAX_WATER_CYCLES = 3;
+const int NOT_WATERING_CYCLES = 8;
+
 // -- Parts status
 bool pump = false;
 bool light = false; // Not supported for the moment
 bool badpHFlag = false; // Will be set if there is a bad pH detected
 bool badTemperatureFlag = false; // Will be set if the temperature is to hot or cold for the herbs
+
+int current_water_cycles = 0;
+int current_off_water_cycles = 0;
 
 void setup() {
 	Serial.begin(9600);
@@ -87,10 +93,20 @@ void handleSensors() {
 	int pH = 6;
 
 	// Water control
-	if(moisture < 700) {
-		pump = false;
-	} else {
+	if(moisture > 700 && current_water_cycles < MAX_WATER_CYCLES) {
 		pump = true;
+		current_water_cycles = current_water_cycles + 1;
+	} else {
+		pump = false;
+		current_off_water_cycles = current_off_water_cycles + 1;
+
+		// When the pump is of for 8 cycles and can be enabled again
+		// when dry soil is detected
+		// This is done to give the water the time to get in the soil
+		if(current_off_water_cycles == 10) {
+			current_off_water_cycles = 0;
+			current_water_cycles = 0;
+		}
 	}
 
 	// pH
