@@ -13,6 +13,11 @@ In the root folder of the project run:
 
 	ino build
 
+Build and install to my Arduino pro mini:
+
+	ino build -m pro5v328
+	ino upload -m pro5v328
+
 Debug
 -----
 If the build gives errors try to run:
