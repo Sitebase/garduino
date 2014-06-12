@@ -24,3 +24,5 @@ Interesting read
 * [pH levels for herbs](http://www.gardenersnet.com/atoz/phlevel3.htm)
 * [Change pH level of soil](http://www.clemson.edu/extension/hgic/plants/other/soils/hgic1650.html)
 * [Standalone Atmega](http://arduino.cc/en/Main/Standalone)
+* [Command line build and upload your Arduino project with ino](http://inotool.org/)
+* [Quick start with ino](http://inotool.org/quickstart)

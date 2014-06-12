@@ -86,10 +86,10 @@ void handleSensors() {
 	int pH = 6;
 
 	// Water control
-	if(moisture < 500) {
+	if(moisture < 700) {
 		pump = true;
 	}
-	if(moisture > 700) {
+	if(moisture > 900) {
 		pump = false;
 	}
 
