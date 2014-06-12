@@ -1,4 +1,5 @@
 #include "DHT.h"
+#include "Scheduler.h"
 
 DHT dht;
 
