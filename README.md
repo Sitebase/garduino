@@ -31,6 +31,8 @@ Todo
 * Add solar panel to power the arduino
 * Buy water proof box for the electronics
 * Maybe use interrupts for button based actions so we can use a slow main loop that only checks sensors each 30 seconds or so (more energy efficient). The buttons can then be directly handled when pushed.
+* Use bandgap to detect low battery (see Interesting read)
+* Run from batteries instead of PSU
 
 Interesting read
 ----------------
@@ -43,3 +45,5 @@ Interesting read
 * [Multithreading](http://arduino.cc/en/Tutorial/MultipleBlinks)
 * [Arduino libray list](http://playground.arduino.cc/Main/LibraryList#Sched)
 * [Interrupts](https://code.google.com/p/arduino-pcimanager/)
+* [REST interface for reading out sensor information](https://github.com/sirleech/Webduino)
+* [Use bandgap to detect low battery](http://jeelabs.org/2012/05/04/measuring-vcc-via-the-bandgap/)
