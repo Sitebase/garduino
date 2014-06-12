@@ -7,6 +7,19 @@ Components
 * Humidity and Temperature (DHT11) - see the Arduino libraries folder, then dht and there is an exmaple of how to use it
 * Light (LDR) - 
 
+Build
+-----
+In the root folder of the project run:
+
+	ino build
+
+Debug
+-----
+If the build gives errors try to run:
+
+	ino clean
+	ino build
+
 Todo
 ----
 * Plant profiles for optimized growing of specific herbs
@@ -17,6 +30,7 @@ Todo
 * Add status lights for pump (in a later stage maybe switch to a rgb led or something that can represent the health of the plant)
 * Add solar panel to power the arduino
 * Buy water proof box for the electronics
+* Maybe use interrupts for button based actions so we can use a slow main loop that only checks sensors each 30 seconds or so (more energy efficient). The buttons can then be directly handled when pushed.
 
 Interesting read
 ----------------
@@ -24,3 +38,8 @@ Interesting read
 * [pH levels for herbs](http://www.gardenersnet.com/atoz/phlevel3.htm)
 * [Change pH level of soil](http://www.clemson.edu/extension/hgic/plants/other/soils/hgic1650.html)
 * [Standalone Atmega](http://arduino.cc/en/Main/Standalone)
+* [Command line build and upload your Arduino project with ino](http://inotool.org/)
+* [Quick start with ino](http://inotool.org/quickstart)
+* [Multithreading](http://arduino.cc/en/Tutorial/MultipleBlinks)
+* [Arduino libray list](http://playground.arduino.cc/Main/LibraryList#Sched)
+* [Interrupts](https://code.google.com/p/arduino-pcimanager/)
