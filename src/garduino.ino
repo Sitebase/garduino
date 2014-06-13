@@ -1,3 +1,20 @@
+/*
+	Garduino
+
+	Garden control system that will monitor some key values and makes adjustments based on that.
+	For example detecting low moisture level will turn on a pump to give the plant more water.
+
+	The circuit:
+	* list the components attached to each input
+	* list the components attached to each output
+
+	Created 11 06 2014
+	By Wim Mostmans (Sitebase)
+
+	https://github.com/sitebase/garduino
+
+*/
+
 #include "DHT.h"
 #include "Scheduler.h"
 
