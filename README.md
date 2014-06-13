@@ -27,6 +27,7 @@ If the build gives errors try to run:
 
 Todo
 ----
+* If temperature is above X water every x time (cycles)
 * Plant profiles for optimized growing of specific herbs
 * dht.getStatusString() returns TIMEOUT when connection problem and OK when connection is working. Maybe check for these values
 * Water level sensor for the reservoir
