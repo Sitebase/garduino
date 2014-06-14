@@ -16,8 +16,13 @@
 */
 
 #include "DHT.h"
-#include "Scheduler.h"
+#include <RCSwitch.h>
+#include <avr/sleep.h>
+#include <Narcoleptic.h>
+#include <Scheduler.h>
 
+RCSwitch mySwitch = RCSwitch();
+Scheduler scheduler = Scheduler(); 
 DHT dht;
 
 // -- Pins
@@ -28,8 +33,8 @@ const int PUMP_PIN = 4;
 const int PH_PIN = 5;
 const int PH_STATUS_PIN = 6;
 
-const int MAX_WATER_CYCLES = 3;
-const int NOT_WATERING_CYCLES = 8;
+const int MAX_WATER_CYCLES = 8;
+const int NOT_WATERING_CYCLES = 20;
 
 // -- Parts status
 bool pump = false;
@@ -40,16 +45,34 @@ bool badTemperatureFlag = false; // Will be set if the temperature is to hot or 
 int current_water_cycles = 0;
 int current_off_water_cycles = 0;
 
+bool status = false;
+
 void setup() {
+
 	Serial.begin(9600);
 	dht.setup(TEMPERATURE_PIN);
 	pinMode(PUMP_PIN, OUTPUT); 
+	pinMode(13, OUTPUT);
+
+	mySwitch.enableTransmit(10);
+	
 }
 
 
 void loop() {
 
-	delay(dht.getMinimumSamplingPeriod());
+	// Better sleep method
+	//delay(dht.getMinimumSamplingPeriod());
+	Narcoleptic.delay(1000);
+
+	scheduler.update();
+	if (Serial.available()){            //if we have recieved anything on the Serial
+    	scheduler.schedule(setHigh,2000);  //schedule a setHigh call in 500 milliseconds
+    	Serial.flush();                   //flush Serial so we do not schedule multiple setHigh calls
+  	}
+
+
+	//digitalWrite(13, HIGH);
 
 	// Handle REST info call
 	handleREST();
@@ -140,6 +163,12 @@ void handleSensors() {
 		badTemperatureFlag = true;
 	}
 
+	mySwitch.send(moisture, 24);
+	delay(500);  
+  	mySwitch.send(temperature, 24);
+  	delay(500);  
+  	mySwitch.send(humidity, 24);
+
 	log(temperature, humidity, moisture, light, pH);
 
 }
@@ -205,4 +234,13 @@ void log(float temperature, float humidity, int moisture, int light, int pH) {
 	Serial.print("pH: ");
 	Serial.print(pH);
 	Serial.print("\n");
+}
+
+void setHigh(){
+  digitalWrite(13,HIGH);          //set ledPin HIGH
+  scheduler.schedule(setLow,500);     //schedule setLow to execute in 500 milliseconds
+}
+
+void setLow(){
+  digitalWrite(13,LOW);           //set ledPin LOW
 }

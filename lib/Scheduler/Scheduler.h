@@ -30,7 +30,12 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
-#include <WProgram.h>
+#if defined(ARDUINO) && ARDUINO >= 100
+  #include "Arduino.h"
+#else
+  #include "WProgram.h"
+  #include <pins_arduino.h>
+#endif
 
 //provide a typedef for a void function pointer
 typedef void (*function)();
