@@ -16,13 +16,14 @@
 */
 
 #include "DHT.h"
-#include <RCSwitch.h>
 #include <avr/sleep.h>
 #include <Narcoleptic.h>
 #include <Scheduler.h>
+#include <Queue.h>
 
-RCSwitch mySwitch = RCSwitch();
+
 Scheduler scheduler = Scheduler(); 
+Queue myQueue;
 DHT dht;
 
 // -- Pins
@@ -33,8 +34,8 @@ const int PUMP_PIN = 4;
 const int PH_PIN = 5;
 const int PH_STATUS_PIN = 6;
 
-const int MAX_WATER_CYCLES = 8;
-const int NOT_WATERING_CYCLES = 20;
+const int MAX_WATER_CYCLES = 1;
+const int NOT_WATERING_CYCLES = 2;
 
 // -- Parts status
 bool pump = false;
@@ -53,9 +54,16 @@ void setup() {
 	dht.setup(TEMPERATURE_PIN);
 	pinMode(PUMP_PIN, OUTPUT); 
 	pinMode(13, OUTPUT);
-
-	mySwitch.enableTransmit(10);
+	pinMode(10, INPUT);  
 	
+
+    myQueue.scheduleFunction(handleSensors, "Test", 1000, 5000);
+    //myQueue.scheduleFunction(testFunction2, "Test", 1000, 5000);
+
+    while(1) {
+        myQueue.Run(millis());
+        delay(2001);
+    }
 }
 
 
@@ -63,19 +71,17 @@ void loop() {
 
 	// Better sleep method
 	//delay(dht.getMinimumSamplingPeriod());
-	Narcoleptic.delay(1000);
+	/*Narcoleptic.delay(1000);
 
+	//myQueue.Run(millis());
 	scheduler.update();
 	if (Serial.available()){            //if we have recieved anything on the Serial
-    	scheduler.schedule(setHigh,2000);  //schedule a setHigh call in 500 milliseconds
+    	scheduler.schedule(setHigh,5000);  //schedule a setHigh call in 500 milliseconds
     	Serial.flush();                   //flush Serial so we do not schedule multiple setHigh calls
   	}
 
 
 	//digitalWrite(13, HIGH);
-
-	// Handle REST info call
-	handleREST();
 
 	// Check for user input
 	// Button clicks
@@ -89,7 +95,7 @@ void loop() {
 	}
 	
 	// Manage garden
-	manageGarden();
+	manageGarden();*/
 
 }
 
@@ -123,7 +129,7 @@ bool handleInputs() {
 	return false;
 }
 
-void handleSensors() {
+int handleSensors(unsigned long now) {
 
 	// Read sensor values
 	int moisture = getMoistureValue();
@@ -133,27 +139,30 @@ void handleSensors() {
 	int pH = 6;
 
 	// Water control
-	if(moisture > 700 && current_water_cycles < MAX_WATER_CYCLES) {
+	if(
+		moisture > 400 && 
+		current_water_cycles < MAX_WATER_CYCLES &&
+		light > 100 // Make sure it's not night time
+	) {
 		pump = true;
 		current_water_cycles = current_water_cycles + 1;
+		log("Enable pump");
 	} else {
+
+		if(pump == true) {
+			log("Disable pump");
+		}
+
 		pump = false;
 		current_off_water_cycles = current_off_water_cycles + 1;
 
 		// When the pump is of for 8 cycles and can be enabled again
 		// when dry soil is detected
 		// This is done to give the water the time to get in the soil
-		if(current_off_water_cycles == 10) {
+		if(current_off_water_cycles == NOT_WATERING_CYCLES) {
 			current_off_water_cycles = 0;
 			current_water_cycles = 0;
 		}
-	}
-
-	// pH
-	if(pH > 5 && pH < 7) {
-		badpHFlag = false;
-	} else {
-		badpHFlag = true;
 	}
 
 	// Temperature
@@ -163,42 +172,9 @@ void handleSensors() {
 		badTemperatureFlag = true;
 	}
 
-	mySwitch.send(moisture, 24);
-	delay(500);  
-  	mySwitch.send(temperature, 24);
-  	delay(500);  
-  	mySwitch.send(humidity, 24);
+	logData(temperature, humidity, moisture, light, pH);
 
-	log(temperature, humidity, moisture, light, pH);
-
-}
-
-/**
- * Based on https://github.com/jjg/RESTduino/blob/master/RESTduino.ino
- */
-void handleREST() {
-
-	// Read sensor values
-	int moisture = getMoistureValue();
-	float temperature = getTemperatureValue();
-	float humidity = getHumidityValue();
-	int light = getLightValue();
-	int pH = 6;
-
-	String jsonOut = String();
-
-	jsonOut += "{\"";
-	jsonOut += "\"moisture\"";
-	jsonOut += "\":\"";
-	jsonOut += String(moisture);
-	jsonOut += "\"}";
-
-	//  return value with wildcarded Cross-origin policy
-	/*client.println("HTTP/1.1 200 OK");
-	client.println("Content-Type: text/html");
-	client.println("Access-Control-Allow-Origin: *");
-	client.println();
-	client.println(jsonOut);*/
+	manageGarden();
 
 }
 
@@ -210,15 +186,20 @@ void manageGarden() {
 		digitalWrite(PUMP_PIN, LOW);
 	}
 
-	if(badpHFlag) {
+	/*if(badpHFlag) {
 		digitalWrite(PH_STATUS_PIN, HIGH);
 	} else {
 		digitalWrite(PH_STATUS_PIN, LOW);
-	}
+	}*/
 
 }
 
-void log(float temperature, float humidity, int moisture, int light, int pH) {
+void log(char *str) {
+	Serial.print("-> ");
+	Serial.println(str);
+}
+
+void logData(float temperature, float humidity, int moisture, int light, int pH) {
 	Serial.print("Temperature: ");
 	Serial.print(temperature, 1);
 	Serial.print("\t");  
@@ -229,18 +210,21 @@ void log(float temperature, float humidity, int moisture, int light, int pH) {
 	Serial.print(moisture);
 	Serial.print("\t");  
 	Serial.print("Light: ");
-	Serial.print(light);
-	Serial.print("\t");  
-	Serial.print("pH: ");
-	Serial.print(pH);
-	Serial.print("\n");
+	Serial.println(light); 
 }
 
 void setHigh(){
-  digitalWrite(13,HIGH);          //set ledPin HIGH
-  scheduler.schedule(setLow,500);     //schedule setLow to execute in 500 milliseconds
+  Serial.println("This is the scheduled task *******");
 }
 
-void setLow(){
-  digitalWrite(13,LOW);           //set ledPin LOW
+int testFunction(unsigned long now)
+{
+    Serial.print("Hello: ");
+    Serial.println(now);
+}
+
+int testFunction2(unsigned long now)
+{
+    Serial.print("Hello world: ");
+    Serial.println(now);
 }
